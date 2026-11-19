@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ex Call Bomber</title>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{margin:0}
+body{background:#f4f7f6;color:#14213d;font-family:Inter,Arial,sans-serif;min-height:100vh}
+body.locked{overflow:hidden}
+.header{background:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e6ebe9;position:sticky;top:0;z-index:5}
+.logo{font-size:30px;font-weight:800;color:#0e9f4f;letter-spacing:-1px}
+.hright{display:flex;align-items:center;gap:6px}
+.speak{background:#eaf6ef;border:0;border-radius:50%;width:42px;height:42px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.speak:active{background:#c6e4d1}
+.burger{background:none;border:0;padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.burger span{display:block;width:28px;height:3px;background:#14213d;border-radius:2px}
+.hero{height:150px;background:linear-gradient(180deg,#eaf6ef 0%,#c6e4d1 100%);position:relative;overflow:hidden}
+.hero .sun{position:absolute;right:80px;top:18px;width:110px;height:110px;border-radius:50%;background:#fbe21c}
+.hero .hill{position:absolute;left:-20%;bottom:-70px;width:140%;height:130px;background:#b5dbc3;border-radius:50% 50% 0 0}
+.hero .road{position:absolute;left:0;right:0;bottom:22px;height:14px;background:#555;transform:rotate(-3deg)}
+.wrap{padding:0 16px;margin-top:-12px;position:relative}
+.card{background:#fff;border-radius:24px;padding:20px 16px 18px;box-shadow:0 6px 24px rgba(20,33,61,.08);max-width:520px;margin:20px auto;scroll-margin-top:80px}
+.card h2{margin:0 0 4px;font-size:20px}
+.sub{margin:0 0 18px;color:#7b8794;font-size:14px}
+.field{border:1.5px solid #d5dbe0;border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:14px;transition:border-color .15s}
+.field:focus-within{border-color:#0e9f4f}
+.field svg{flex:none}
+.field label{display:block;color:#0e9f4f;font-size:13px;margin-bottom:2px}
+.field input{width:100%;border:0;outline:0;background:transparent;font:inherit;font-size:22px;font-weight:700;color:#14213d;padding:0;margin:0}
+.field input::placeholder{color:#a0a9b4}
+.btn{width:100%;margin-top:20px;border:0;border-radius:16px;padding:18px;background:#0e9f4f;color:#fff;font-size:18px;font-weight:700;cursor:pointer}
+.btn:disabled{opacity:.6}
+.btn:active{background:#0b8741}
+
+/* landing page */
+.landing{position:fixed;inset:0;z-index:100;background:linear-gradient(180deg,#eaf6ef 0%,#c6e4d1 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;transition:opacity .45s ease,transform .45s ease;overflow:hidden}
+.landing.hide{opacity:0;transform:scale(1.04);pointer-events:none}
+.landing .sun{position:absolute;right:12%;top:10%;width:120px;height:120px;border-radius:50%;background:#fbe21c;opacity:.9}
+.landing .hill{position:absolute;left:-20%;bottom:-120px;width:140%;height:280px;background:#b5dbc3;border-radius:50% 50% 0 0}
+.landing .hill2{position:absolute;left:-10%;bottom:-160px;width:120%;height:260px;background:#9fd0b2;border-radius:50% 50% 0 0}
+.landing .inner{position:relative;z-index:1;max-width:420px}
+.landing .logo{font-size:56px;margin-bottom:8px}
+.landing h1{margin:0 0 6px;font-size:26px;color:#14213d}
+.landing p{margin:0 0 28px;color:#4b5a6a;font-size:16px}
+.landing .btn{width:auto;min-width:240px;margin:0;padding:18px 36px;font-size:19px;box-shadow:0 8px 22px rgba(14,159,79,.35);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(14,159,79,.45)}70%{box-shadow:0 0 0 18px rgba(14,159,79,0)}100%{box-shadow:0 0 0 0 rgba(14,159,79,0)}}
+
+/* system card */
+.sys-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eef1f0;font-size:15px}
+.sys-row:last-child{border-bottom:0}
+.sys-row span:first-child{color:#7b8794}
+.online{color:#0e9f4f;font-weight:700}
+
+/* developer card */
+.dev{text-align:center}
+.dev p{margin:6px 0;color:#7b8794;font-size:14px}
+.socials{display:flex;justify-content:center;gap:14px;margin:16px 0 6px}
+.social{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none}
+.social.ig{background:linear-gradient(45deg,#f9a03f,#e1306c,#7b3fe4)}
+.social.fb{background:#1877f2}
+.social.tg{background:#27a7e7}
+.handle{font-size:13px;color:#7b8794;margin-top:4px}
+.copy{text-align:center;font-size:12px;color:#7b8794;padding:0 20px 34px}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(10,20,30,.5);opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+.scrim.show{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:78%;max-width:320px;background:#fff;z-index:21;transform:translateX(100%);transition:transform .22s ease;padding:20px 18px;display:flex;flex-direction:column;padding-top:max(20px,env(safe-area-inset-top))}
+.drawer.show{transform:none}
+.drawer-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.x{background:none;border:0;font-size:30px;line-height:1;cursor:pointer;color:#14213d}
+.menu a.item{display:flex;align-items:center;gap:14px;padding:14px 12px;border-radius:14px;color:#14213d;text-decoration:none;font-size:17px;font-weight:600}
+.menu a.item:active,.menu a.item:hover{background:#eaf6ef;color:#0e9f4f}
+.menu a.item svg{flex:none}
+.menu-soc{margin-top:auto;padding-top:16px;border-top:1px solid #eef1f0}
+.menu-soc .t{font-size:13px;color:#7b8794;margin:0 0 10px 12px}
+.menu-soc .socials{justify-content:flex-start;margin:0 0 10px 12px}
+.menu-soc .social{width:46px;height:46px;border-radius:14px}
+
+/* popup */
+.overlay{position:fixed;inset:0;background:rgba(10,20,30,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:30}
+.overlay.show{display:flex}
+.modal{background:#fff;border-radius:22px;width:100%;max-width:380px;padding:26px 22px 22px;text-align:center;animation:pop .18s ease-out}
+@keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.icon{width:64px;height:64px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff}
+.icon.ok{background:#0e9f4f}
+.icon.bad{background:#e5484d}
+.modal h3{margin:0 0 6px;font-size:20px}
+.modal .num{color:#7b8794;font-size:14px;margin-bottom:14px}
+.modal pre{background:#f4f7f6;color:#14213d;text-align:left;padding:14px;border-radius:12px;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto;margin:0 0 16px}
+.modal .btn{margin-top:0;padding:14px;font-size:16px}
+</style>
+</head>
+<body class="locked">
+
+<!-- Landing page -->
+<div class="landing" id="landing">
+ <div class="sun"></div>
+ <div class="hill2"></div>
+ <div class="hill"></div>
+ <div class="inner">
+  <div class="logo">Call bomber</div>
+  <h1>Welcome</h1>
+  <p>Call Bomber</p>
+  <button class="btn" id="enter" type="button">Welcome to Our Site</button>
+ </div>
+</div>
+
+<div class="header">
+ <div class="logo">Call Bomber</div>
+ <div class="hright">
+  <button class="speak" id="speak" aria-label="Play welcome voice" title="Play voice">🔊</button>
+  <button class="burger" id="open" aria-label="Open menu"><span></span><span></span><span></span></button>
+ </div>
+</div>
+<div class="hero"><div class="sun"></div><div class="hill"></div><div class="road"></div></div>
+
+<div class="wrap">
+ <!-- Dashboard -->
+ <div class="card" id="dashboard">
+  <h2>Call Bomber</h2>
+  <p class="sub">Enter a phone number to bomb it.</p>
+  <form id="form">
+   <div class="field">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="#0e9f4f"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg>
+    <div style="flex:1;min-width:0">
+     <label for="number">Phone Number</label>
+     <input id="number" type="tel" placeholder="019XXXXXXXX" required>
+    </div>
+   </div>
+   <button class="btn" id="submit" type="submit">VERIFY</button>
+  </form>
+ </div>
+
+ <!-- System -->
+ <div class="card" id="system">
+  <h2>System</h2>
+  <p class="sub">Current service status.</p>
+  <div class="sys-row"><span>Status</span><span class="online">● Online</span></div>
+  <div class="sys-row"><span>Endpoint</span><span>/api/verify</span></div>
+  <div class="sys-row"><span>Method</span><span>GET</span></div>
+ </div>
+
+ <!-- Developer -->
+ <div class="card dev" id="developer">
+  <h2>Developer</h2>
+  <p>Developed with ❤️ by Efty</p>
+  <div class="socials">
+   <a class="social ig" href="https://www.instagram.com/efty.notfound?vrfl=ZXpsOHlpZmZqZ28z&utm_source=qr" target="_blank" rel="noopener" aria-label="Instagram">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/></svg>
+   </a>
+   <a class="social fb" href="https://www.facebook.com/share/1CYjkMi4y7/?mibextid=wwXIfr" target="_blank" rel="noopener" aria-label="Facebook">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v2H7v4h3v8h4v-8h3l1-4h-4V8z"/></svg>
+   </a>
+   <a class="social tg" href="https://t.me/Efty67" target="_blank" rel="noopener" aria-label="Telegram">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M21.8 3.2 2.6 10.6c-1 .4-1 1.1-.2 1.3l4.9 1.5 1.9 5.8c.2.6.4.8.9.8.4 0 .6-.2.9-.5l2.4-2.3 4.9 3.6c.9.5 1.5.2 1.8-.8l3.2-15.2c.3-1.3-.5-1.9-1.5-1.5zM8.2 13l10.6-6.7c.5-.3 1-.1.6.2l-8.6 7.8-.3 3.6z"/></svg>
+   </a>
+  </div>
+  <div class="handle">@Efty67 on Telegram</div>
+ </div>
+ <div class="copy">© 2026 team ex Efty</div>
+</div>
+
+<!-- Menu drawer -->
+<div class="scrim" id="scrim"></div>
+<nav class="drawer" id="drawer">
+ <div class="drawer-top">
+  <div class="logo">Call Bomber</div>
+  <button class="x" id="close-menu" aria-label="Close menu">×</button>
+ </div>
+ <div class="menu">
+  <a class="item" href="#dashboard">
+   <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
+  <a class="item" href="#system">
+   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>System</a>
+  <a class="item" href="#developer">
+   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Developer</a>
+ </div>
+ <div class="menu-soc">
+  <p class="t">Contact developer</p>
+  <div class="socials">
+   <a class="social ig" href="https://www.instagram.com/efty.notfound?vrfl=ZXpsOHlpZmZqZ28z&utm_source=qr" target="_blank" rel="noopener" aria-label="Instagram">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/></svg>
+   </a>
+   <a class="social fb" href="https://www.facebook.com/share/1CYjkMi4y7/?mibextid=wwXIfr" target="_blank" rel="noopener" aria-label="Facebook">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v2H7v4h3v8h4v-8h3l1-4h-4V8z"/></svg>
+   </a>
+   <a class="social tg" href="https://t.me/Efty67" target="_blank" rel="noopener" aria-label="Telegram">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M21.8 3.2 2.6 10.6c-1 .4-1 1.1-.2 1.3l4.9 1.5 1.9 5.8c.2.6.4.8.9.8.4 0 .6-.2.9-.5l2.4-2.3 4.9 3.6c.9.5 1.5.2 1.8-.8l3.2-15.2c.3-1.3-.5-1.9-1.5-1.5zM8.2 13l10.6-6.7c.5-.3 1-.1.6.2l-8.6 7.8-.3 3.6z"/></svg>
+   </a>
+  </div>
+ </div>
+</nav>
+
+<!-- Result popup -->
+<div class="overlay" id="overlay">
+ <div class="modal">
+  <div class="icon" id="icon"></div>
+  <h3 id="title"></h3>
+  <div class="num" id="shownum"></div>
+  <pre id="response"></pre>
+  <button class="btn" id="close" type="button">OK</button>
+ </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+
+/* welcome audio (welcome.mp3 + fallback sound/voice) */
+const welcomeAudio=new Audio('welcome.mp3');
+welcomeAudio.preload='auto';
+
+function playFallbackAudio(){
+ try{
+  const AudioCtx=window.AudioContext||window.webkitAudioContext;
+  if(AudioCtx){
+   const ctx=new AudioCtx();
+   const osc=ctx.createOscillator();
+   const gain=ctx.createGain();
+   osc.type='sine';
+   osc.frequency.setValueAtTime(660,ctx.currentTime);
+   osc.frequency.exponentialRampToValueAtTime(880,ctx.currentTime+0.16);
+   gain.gain.setValueAtTime(0.08,ctx.currentTime);
+   gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.22);
+   osc.connect(gain);
+   gain.connect(ctx.destination);
+   osc.start();
+   osc.stop(ctx.currentTime+0.22);
+  }
+ }catch(e){}
+
+ try{
+  if('speechSynthesis' in window){
+   window.speechSynthesis.cancel();
+   const u=new SpeechSynthesisUtterance('Welcome');
+   u.rate=1.05;
+   window.speechSynthesis.speak(u);
+  }
+ }catch(e){}
+}
+
+function playWelcome(){
+ try{
+  welcomeAudio.currentTime=0;
+  const p=welcomeAudio.play();
+  if(p&&p.catch){
+   p.catch(()=>playFallbackAudio());
+  }
+ }catch(e){
+  playFallbackAudio();
+ }
+}
+
+$('enter').addEventListener('click',()=>{
+ playWelcome();
+ $('landing').classList.add('hide');
+ document.body.classList.remove('locked');
+ window.scrollTo(0,0);
+ setTimeout(()=>{const l=$('landing');if(l)l.remove()},500);
+});
+$('speak').addEventListener('click',playWelcome);
+
+/* menu */
+function menu(open){
+ $('drawer').classList.toggle('show',open);
+ $('scrim').classList.toggle('show',open);
+}
+$('open').addEventListener('click',()=>menu(true));
+$('close-menu').addEventListener('click',()=>menu(false));
+$('scrim').addEventListener('click',()=>menu(false));
+document.querySelectorAll('.menu a.item').forEach(a=>a.addEventListener('click',()=>menu(false)));
+
+/* popup */
+function showPopup(ok,number,title,body){
+ $('icon').className='icon '+(ok?'ok':'bad');
+ $('icon').textContent=ok?'✓':'✕';
+ $('title').textContent=title;
+ $('shownum').textContent=number;
+ $('response').textContent=JSON.stringify(body,null,2);
+ $('overlay').classList.add('show');
+}
+$('close').addEventListener('click',()=>$('overlay').classList.remove('show'));
+$('overlay').addEventListener('click',e=>{if(e.target===$('overlay'))$('overlay').classList.remove('show')});
+
+/* verify */
+$('form').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const number=$('number').value.trim();
+ if(!/^\+?[0-9]{8,15}$/.test(number)){
+  showPopup(false,number,'Invalid phone number',{success:false,message:'Enter 8 to 15 digits'});
+  return;
+ }
+
+ playWelcome();
+
+ const btn=$('submit');
+ btn.disabled=true;
+ btn.textContent='CHECKING...';
+
+ try{
+  const r=await fetch('/api/verify?num='+encodeURIComponent(number),{
+   method:'GET',
+   cache:'no-store'
+  });
+  const text=await r.text();
+  let data;
+  try{
+   data=JSON.parse(text);
+  }catch(_){
+   data={success:false,message:'Non-JSON response from /api/verify',raw:text.slice(0,300)};
+  }
+  const ok=r.ok && data.success===true;
+  showPopup(ok,number,ok?'Verification Successful':'Verification Failed',{http_status:r.status,...data});
+ }catch(err){
+  showPopup(false,number,'Connection Error',{success:false,message:err.message||'Connection error'});
+ }
+
+ btn.disabled=false;
+ btn.textContent='VERIFY';
+});
+</script>
+</body>
+</html>
+
