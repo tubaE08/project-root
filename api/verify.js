@@ -31,14 +31,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    const endpoint = `https://darktoolshub.net/sms/call.php?num=${encodeURIComponent(num)}`;
+    const endpoint = `https://apicall-coral.vercel.app/api?num=${encodeURIComponent(num)}`;
     const apiResponse = await fetch(endpoint, {
       method: 'GET',
       redirect: 'follow',
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
         'Accept': 'application/json, text/plain, */*',
-        'Referer': 'https://darktoolshub.net/'
+        'Referer': 'https://apicall-coral.vercel.app/'
       }
     });
 
@@ -76,4 +76,5 @@ export default async function handler(req, res) {
     });
   }
 }
+
 
