@@ -34,11 +34,12 @@ export default async function handler(req, res) {
     const endpoint = `https://darktoolshub.net/sms/call.php?num=${encodeURIComponent(num)}`;
     const apiResponse = await fetch(endpoint, {
       method: 'GET',
+      redirect: 'follow',
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-        'Accept': 'application/json, text/plain, */*'
-      },
-      signal: AbortSignal.timeout(12000)
+        'Accept': 'application/json, text/plain, */*',
+        'Referer': 'https://darktoolshub.net/'
+      }
     });
 
     const responseText = await apiResponse.text();
@@ -75,3 +76,4 @@ export default async function handler(req, res) {
     });
   }
 }
+
