@@ -1,0 +1,387 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Call Bomber</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ min-height:100vh;
+ font-family:Inter,Arial,sans-serif;
+ color:#172b25;
+ background:linear-gradient(-45deg,#e8f8ed,#c8eed6,#effff3,#d4f3df);
+ background-size:400% 400%;
+ animation:bg 12s ease infinite;
+}
+@keyframes bg{
+ 0%{background-position:0% 50%}
+ 50%{background-position:100% 50%}
+ 100%{background-position:0% 50%}
+}
+.particle{
+ position:fixed;
+ width:9px;height:9px;
+ border-radius:50%;
+ background:#0e9f4f;
+ opacity:.16;
+ pointer-events:none;
+ animation:float 9s infinite ease-in-out;
+}
+@keyframes float{
+ 0%,100%{transform:translateY(0)}
+ 50%{transform:translateY(-90px)}
+}
+.navbar{
+ background:rgba(255,255,255,.85);
+ backdrop-filter:blur(15px);
+ box-shadow:0 3px 20px #00000008;
+}
+.brand{
+ font-size:25px;
+ font-weight:900;
+ color:#0e9f4f;
+}
+.main-card{
+ background:rgba(255,255,255,.92);
+ border:1px solid #ffffff;
+ border-radius:25px;
+ padding:25px;
+ box-shadow:0 12px 40px #173d2512;
+}
+.hero{
+ text-align:center;
+ padding:65px 15px 35px;
+}
+.hero h1{
+ font-size:36px;
+ font-weight:900;
+}
+.hero span{color:#0e9f4f}
+.form-control{
+ border-radius:14px;
+ padding:15px;
+ border:1.5px solid #d9e6dd;
+}
+.form-control:focus{
+ border-color:#0e9f4f;
+ box-shadow:0 0 0 3px #0e9f4f20;
+}
+.main-btn{
+ background:#0e9f4f;
+ border:0;
+ color:white;
+ padding:15px;
+ border-radius:14px;
+ font-weight:800;
+ width:100%;
+}
+.main-btn:hover{background:#087d3c;color:white}
+.status{
+ color:#0e9f4f;
+ font-weight:800;
+}
+.history-item{
+ background:#f2faf4;
+ padding:13px;
+ border-radius:12px;
+ margin-top:10px;
+ display:flex;
+ justify-content:space-between;
+ gap:10px;
+}
+.social{
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ width:48px;height:48px;
+ border-radius:14px;
+ color:white;
+ text-decoration:none;
+ margin:5px;
+ font-weight:bold;
+}
+.fb{background:#1877f2}
+.ig{background:#d62976}
+.tg{background:#27a7e7}
+.footer{text-align:center;padding:25px;color:#708078}
+.landing{
+ position:fixed;
+ inset:0;
+ z-index:100;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ text-align:center;
+ background:linear-gradient(140deg,#dff8e8,#a9dfbb,#e9fff0);
+ transition:.5s;
+}
+.landing.hide{
+ opacity:0;
+ visibility:hidden;
+}
+.landing h1{
+ font-size:48px;
+ font-weight:900;
+ color:#0e9f4f;
+}
+</style>
+</head>
+
+<body>
+
+<div class="particle" style="top:20%;left:10%"></div>
+<div class="particle" style="top:50%;left:85%"></div>
+<div class="particle" style="top:80%;left:30%"></div>
+<div class="particle" style="top:15%;left:70%"></div>
+
+<!-- Welcome -->
+<div class="landing" id="landing">
+ <div>
+  <h1>Call Bomber</h1>
+  <h4>Welcome to Our Platform</h4>
+  <p class="text-secondary">Developed by Efty</p>
+  <button class="btn btn-success btn-lg rounded-pill px-5"
+  onclick="enterSite()">VISIT OUR SITE</button>
+ </div>
+</div>
+
+<audio id="welcomeAudio" src="welcome.mp3" preload="auto"></audio>
+<audio id="notifyAudio" src="notify.mp3" preload="auto"></audio>
+
+<!-- Navbar -->
+<nav class="navbar sticky-top">
+ <div class="container py-2">
+  <a class="navbar-brand brand" href="#">Call Bomber</a>
+  <span class="status">● ONLINE</span>
+ </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+ <h1>Smart <span>Call Bomber<span></h1>
+ <p class="text-secondary">Prank with your friend</p>
+</section>
+
+<div class="container pb-4">
+
+ <!-- Verification -->
+ <div class="row justify-content-center">
+  <div class="col-lg-6">
+   <div class="main-card">
+    <h4 class="fw-bold">Call Bomber</h4>
+    <p class="text-secondary small">
+     Enter your victim number.
+    </p>
+
+    <form id="verifyForm">
+     <label class="form-label fw-bold">Phone Number</label>
+     <input
+      type="tel"
+      id="number"
+      class="form-control"
+      placeholder="019XXXXXXXX"
+      maxlength="16"
+      required
+     >
+     <button class="main-btn mt-4" id="verifyBtn">
+      SEND
+     </button>
+    </form>
+   </div>
+  </div>
+ </div>
+
+ <!-- System -->
+ <div class="row justify-content-center mt-4">
+  <div class="col-lg-6">
+   <div class="main-card">
+    <h5 class="fw-bold">System Information</h5>
+    <hr>
+    <div class="d-flex justify-content-between py-2">
+     <span>Platform</span>
+     <b>Call Bomber</b>
+    </div>
+    <div class="d-flex justify-content-between py-2">
+     <span>Status</span>
+     <b class="status">ONLINE</b>
+    </div>
+    <div class="d-flex justify-content-between py-2">
+     <span>API</span>
+     <b>/api/verify</b>
+    </div>
+    <div class="d-flex justify-content-between py-2">
+     <span>Method</span>
+     <b>GET</b>
+    </div>
+   </div>
+  </div>
+ </div>
+
+ <!-- History -->
+ <div class="row justify-content-center mt-4">
+  <div class="col-lg-6">
+   <div class="main-card">
+    <div class="d-flex justify-content-between">
+     <h5 class="fw-bold">Bomb History</h5>
+     <button class="btn btn-sm btn-outline-danger"
+      onclick="clearHistory()">Clear</button>
+    </div>
+    <div id="history">
+     <p class="text-secondary small mt-3">
+      No verification history yet.
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+
+ <!-- Developer -->
+ <div class="row justify-content-center mt-4">
+  <div class="col-lg-6">
+   <div class="main-card text-center">
+    <h4 class="fw-bold">Developer</h4>
+    <p class="text-secondary">Developed with ❤️ by Efty</p>
+
+    <a class="social ig"
+     href="https://www.instagram.com/efty.notfound/"
+     target="_blank">IG</a>
+
+    <a class="social fb"
+     href="https://www.facebook.com/share/1CYjkMi4y7/"
+     target="_blank">FB</a>
+
+    <a class="social tg"
+     href="https://t.me/Efty67"
+     target="_blank">TG</a>
+
+    <p class="small text-secondary mt-2">@Efty67</p>
+   </div>
+  </div>
+ </div>
+
+</div>
+
+<div class="footer">
+ © 2026 EX CALL BOMBER | Developed by Efty
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function enterSite(){
+ $('landing').classList.add('hide');
+ $('welcomeAudio').play().catch(()=>{});
+}
+
+function playNotification(){
+ $('notifyAudio').currentTime=0;
+ $('notifyAudio').play().catch(()=>{});
+}
+
+function addHistory(number,success){
+ const history=$('history');
+
+ if(history.querySelector('p')) history.innerHTML='';
+
+ const item=document.createElement('div');
+ item.className='history-item';
+
+ const phone=document.createElement('b');
+ phone.textContent=number;
+
+ const result=document.createElement('span');
+ result.textContent=success?'SUCCESS':'FAILED';
+ result.className=success?'text-success':'text-danger';
+
+ item.append(phone,result);
+ history.prepend(item);
+}
+
+function clearHistory(){
+ $('history').innerHTML=
+ '<p class="text-secondary small mt-3">No verification history yet.</p>';
+}
+
+$('verifyForm').addEventListener('submit',async function(e){
+ e.preventDefault();
+
+ const number=$('number').value.trim();
+ const btn=$('verifyBtn');
+
+ if(!/^\+?[0-9]{8,15}$/.test(number)){
+  Swal.fire('Invalid Number','Enter a valid phone number.','error');
+  return;
+ }
+
+ btn.disabled=true;
+ btn.textContent='CHECKING...';
+
+ Swal.fire({
+  title:'Sending......',
+  html:'Please wait...',
+  allowOutsideClick:false,
+  didOpen:()=>Swal.showLoading()
+ });
+
+ try{
+  const response=await fetch(
+   '/api/verify?num='+encodeURIComponent(number),
+   {
+    method:'GET',
+    cache:'no-store',
+    headers:{'Accept':'application/json'}
+   }
+  );
+
+  const raw=await response.text();
+  let data;
+
+  try{
+   data=JSON.parse(raw);
+  }catch{
+   throw new Error('API returned invalid JSON');
+  }
+
+  const success=response.ok && data.success===true;
+
+  Swal.close();
+  playNotification();
+
+  addHistory(number,success);
+
+  Swal.fire({
+   icon:success?'success':'error',
+   title:success?'send successful':'send Failed',
+   html:'<p>Phone: '+number+'</p><pre style="text-align:left;white-space:pre-wrap">'+
+    JSON.stringify(data,null,2).replace(/</g,'&lt;')+
+    '</pre>',
+   confirmButtonColor:'#0e9f4f'
+  });
+
+ }catch(error){
+  Swal.close();
+  playNotification();
+
+  Swal.fire({
+   icon:'error',
+   title:'Connection Error',
+   text:error.message
+  });
+
+ }finally{
+  btn.disabled=false;
+  btn.textContent='VERIFY NUMBER';
+ }
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
